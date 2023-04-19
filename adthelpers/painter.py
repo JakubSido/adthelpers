@@ -4,18 +4,19 @@ import matplotlib
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# import matplotlib.pyplot as plt, mpld3
+#import matplotlib.pyplot as plt, mpld3
 print(matplotlib.matplotlib_fname())
 
-def on_press(event):
-    if event.key == 'n':
-        Painter.wait_for_key = False
+
 
 
 class Painter():
-    wait_for_key = True
+    def on_press(self,event):
+        if event.key == 'n':
+            self.wait_for_key = False
 
-    def __init__(self, graph, visible, closed, active, distances=None, color_edges=None):
+    def __init__(self, graph, visible, closed, active, distances=None, color_edges=None, wait_for_key=True):
+        self.wait_for_key = wait_for_key
         self.distances = distances
         self.active = active
         self.visible = visible
@@ -25,7 +26,7 @@ class Painter():
 
         plt.ion()
         fig, self.ax = plt.subplots()
-        fig.canvas.mpl_connect('key_press_event', on_press)
+        fig.canvas.mpl_connect('key_press_event', self.on_press)
         plt.show(block=False)
 
 
@@ -42,7 +43,7 @@ class Painter():
             elif node == self.active:
                 color_map.append('red')
 
-            elif node in [x for _, x, *_ in self.visible.queue]:
+            elif node in [x[1] for _, x in self.visible.queue]:
                 color_map.append('yellow')
 
             else:
@@ -79,10 +80,10 @@ class Painter():
         edge_labels = {edge: edge_weights[edge] for edge in self.graph.edges()}
         nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=edge_labels, label_pos=0.3, font_size=7)
 
-        while Painter.wait_for_key:
+        while self.wait_for_key:
             time.sleep(0.01)
             plt.pause(0.01)
-        Painter.wait_for_key=True
+        self.wait_for_key=True
 
 
 
