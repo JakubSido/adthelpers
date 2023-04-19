@@ -37,7 +37,7 @@ class Painter():
         color_map = []
         for i, node, *_ in enumerate(self.graph):
             if node in self.closed:
-                color_map.append('green')
+                color_map.append('blue')
 
             elif node == self.active:
                 color_map.append('red')
