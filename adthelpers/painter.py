@@ -7,21 +7,27 @@ import matplotlib.pyplot as plt
 #import matplotlib.pyplot as plt, mpld3
 print(matplotlib.matplotlib_fname())
 
-
-
+def to_nx_graph(graph):
+    '''Converts graph to networkx graph'''
+    G = nx.Graph()
+    for content,node in graph.nodes.items():
+        for weight,neighbor in node.neighbors:
+            G.add_edge(content, neighbor.content, weight=weight)
+    return G
 
 class Painter():
     def on_press(self,event):
         if event.key == 'n':
-            self.wait_for_key = False
+            self.paused = False
 
     def __init__(self, graph, visible, closed, active, distances=None, color_edges=None, wait_for_key=True):
+        self.paused = wait_for_key
         self.wait_for_key = wait_for_key
         self.distances = distances
         self.active = active
         self.visible = visible
         self.closed = closed
-        self.graph = graph
+        self.graph = to_nx_graph(graph)
         self.color_edges = color_edges
 
         plt.ion()
@@ -33,21 +39,27 @@ class Painter():
 
     def draw_graph(self, active=None):
         plt.cla()
+        
         if active is not None:
-            self.active = active
+            self.active = active.content
+        
         color_map = []
         for i, node, *_ in enumerate(self.graph):
-            if node in self.closed:
-                color_map.append('blue')
+            
+            color = 'grey'
 
-            elif node == self.active:
-                color_map.append('red')
+            if node in [x[1] for _, x in self.visible.queue]:
+                color = 'yellow'    
 
-            elif node in [x[1] for _, x in self.visible.queue]:
-                color_map.append('yellow')
+            if node in [x.content for x in self.closed]:
+                color = 'blue'    
 
-            else:
-                color_map.append('grey')
+            if self.active is not None and node == self.active:
+                color = 'red'    
+
+
+            
+            color_map.append(color)
         pos = nx.spring_layout(self.graph, seed=2)
 
 
@@ -65,12 +77,14 @@ class Painter():
         nx.draw_networkx_labels(self.graph, pos, ax=self.ax, labels=node_labels, )
 
         e_colors = []
+        content_color_edges = [(fr, to) for fr,to in self.color_edges]
         for e in self.graph.edges:
+            e = (e[0], e[1])
             if self.color_edges is None:
                 e_colors.append("grey")
-            elif e in self.color_edges:
+            elif e in content_color_edges:
                 e_colors.append("red")
-            elif (e[1], e[0]) in self.color_edges:
+            elif (e[1], e[0]) in content_color_edges:
                 e_colors.append("red")
             else:
                 e_colors.append("grey")
@@ -80,10 +94,10 @@ class Painter():
         edge_labels = {edge: edge_weights[edge] for edge in self.graph.edges()}
         nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=edge_labels, label_pos=0.3, font_size=7)
 
-        while self.wait_for_key:
+        while self.paused and self.wait_for_key:
             time.sleep(0.01)
             plt.pause(0.01)
-        self.wait_for_key=True
+        self.paused=True
 
 
 
