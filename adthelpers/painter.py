@@ -12,7 +12,7 @@ def to_nx_graph(graph):
     G = nx.Graph()
     for content,node in graph.nodes.items():
         for weight,neighbor in node.neighbors:
-            G.add_edge(content, neighbor.content, weight=weight)
+            G.add_edge(content, neighbor.id, weight=weight)
     return G
 
 class Painter():
@@ -41,7 +41,7 @@ class Painter():
         plt.cla()
         
         if active is not None:
-            self.active = active.content
+            self.active = active.id
         
         color_map = []
         for i, node, *_ in enumerate(self.graph):
@@ -52,7 +52,7 @@ class Painter():
                     color = 'yellow'    
 
             if self.closed is not None:
-                if node in [x.content for x in self.closed]:
+                if node in [x.id for x in self.closed]:
                     color = 'blue'
 
             if self.active is not None and node == self.active:
