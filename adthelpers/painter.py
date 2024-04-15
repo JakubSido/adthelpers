@@ -20,7 +20,7 @@ class Painter():
         if event.key == 'n':
             self.paused = False
 
-    def __init__(self, graph, visible, closed, active, distances=None, color_edges=None, wait_for_key=True):
+    def __init__(self, graph, visible=None, closed=None, active=None, distances=None, color_edges=None, wait_for_key=False):
         self.paused = wait_for_key
         self.wait_for_key = wait_for_key
         self.distances = distances
@@ -47,12 +47,13 @@ class Painter():
         for i, node, *_ in enumerate(self.graph):
             
             color = 'grey'
+            if self.visible is not None and self.visible.queue is not None:
+                if node in [x[1] for _, x in self.visible.queue]:
+                    color = 'yellow'    
 
-            if node in [x[1] for _, x in self.visible.queue]:
-                color = 'yellow'    
-
-            if node in [x.content for x in self.closed]:
-                color = 'blue'    
+            if self.closed is not None:
+                if node in [x.content for x in self.closed]:
+                    color = 'blue'
 
             if self.active is not None and node == self.active:
                 color = 'red'    
@@ -77,7 +78,9 @@ class Painter():
         nx.draw_networkx_labels(self.graph, pos, ax=self.ax, labels=node_labels, )
 
         e_colors = []
-        content_color_edges = [(fr, to) for fr,to in self.color_edges]
+        if self.color_edges is not None:
+            content_color_edges = [(fr, to) for fr,to in self.color_edges]
+        
         for e in self.graph.edges:
             e = (e[0], e[1])
             if self.color_edges is None:
