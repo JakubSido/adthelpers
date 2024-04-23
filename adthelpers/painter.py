@@ -52,7 +52,13 @@ class Painter():
                     color = 'yellow'    
 
             if self.closed is not None:
-                if node in [x.id for x in self.closed]:
+                try:
+                    if node in [x.id for x in self.closed]:
+                            color = 'blue'
+                except AttributeError:
+                    pass
+
+                if node in self.closed:
                     color = 'blue'
 
             if self.active is not None and node == self.active:
