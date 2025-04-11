@@ -9,7 +9,9 @@ import networkx as nx
 #import matplotlib.pyplot as plt, mpld3
 print(matplotlib.matplotlib_fname())
 
-def to_nx_graph(graph: "Graph") -> nx.Graph:  # noqa: F821
+
+
+def to_nx_graph(graph) -> nx.Graph:  # noqa: ANN001
     """Converts graph to networkx graph"""
     g = nx.Graph()
     if hasattr(graph, "nodes"):
@@ -23,11 +25,11 @@ def to_nx_graph(graph: "Graph") -> nx.Graph:  # noqa: F821
     return g
 
 class Painter:
-    def on_press(self, event: any) -> None:
+    def on_press(self, event) -> None:  # noqa: ANN001
         if event.key == "n":
             self.paused = False
 
-    def __init__(self, graph: "Graph", visible: PriorityQueue | None = None,  # noqa: F821
+    def __init__(self, graph, visible: PriorityQueue | None = None,  # noqa: ANN001
                  closed: Iterable[int] | None = None,
                  color_edges: list[tuple[int, int]] | None = None,
                  wait_for_key: bool = False):  # noqa: FBT001, FBT002
@@ -57,7 +59,7 @@ class Painter:
 
             if self.closed is not None:
                 try:
-                    if node in [x.id for x in self.closed]:
+                    if node in self.closed:
                             color = "blue"
                 except AttributeError:
                     pass
@@ -69,8 +71,9 @@ class Painter:
                 color = "red"
 
         color_map.append(color)
+        return color_map
 
-    def draw_graph(self, active: int | "Node" | None = None) -> None:  # noqa: F821, TC010
+    def draw_graph(self, active = None) -> None:  # noqa: ANN001
         plt.cla()
 
         if isinstance(active, int):
@@ -78,7 +81,7 @@ class Painter:
         elif active is not None:
             self.active = active.id
 
-            color_map = self._generate_color_map()
+        color_map = self._generate_color_map()
 
         pos = nx.spring_layout(self.graph, seed=2)
 
@@ -107,7 +110,7 @@ class Painter:
             content_color_edges = [(fr, to) for fr,to in self.color_edges]
 
         for edge in self.graph.edges:
-            e = tuple(edge[0], edge[1])
+            e = (edge[0], edge[1])
             if self.color_edges is None:
                 e_colors.append("grey")
             elif e in content_color_edges or (e[1], e[0]) in content_color_edges:
