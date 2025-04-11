@@ -10,9 +10,14 @@ print(matplotlib.matplotlib_fname())
 def to_nx_graph(graph):
     '''Converts graph to networkx graph'''
     G = nx.Graph()
-    for content,node in graph.nodes.items():
-        for weight,neighbor in node.neighbors:
-            G.add_edge(content, neighbor.id, weight=weight)
+    if hasattr(graph, "nodes"):
+        for content,node in graph.nodes.items():
+            for weight,neighbor in node.neighbors:
+                G.add_edge(content, neighbor.id, weight=weight)
+    else:
+        for source, neighbors in enumerate(graph.edges):
+            for weight, neighbor in neighbors:
+                G.add_edge(source, neighbor, weight=weight)
     return G
 
 class Painter():
@@ -40,7 +45,9 @@ class Painter():
     def draw_graph(self, active=None):
         plt.cla()
         
-        if active is not None:
+        if isinstance(active, int):
+            pass
+        elif active is not None:
             self.active = active.id
         
         color_map = []
