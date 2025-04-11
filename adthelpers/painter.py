@@ -70,7 +70,7 @@ class Painter:
             if self.active is not None and node == self.active:
                 color = "red"
 
-        color_map.append(color)
+            color_map.append(color)
         return color_map
 
     def draw_graph(self, active = None) -> None:  # noqa: ANN001
