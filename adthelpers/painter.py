@@ -19,7 +19,7 @@ def to_nx_graph(graph) -> nx.Graph:  # noqa: ANN001
             for weight,neighbor in node.neighbors:
                 g.add_edge(content, neighbor.id, weight=weight)
     else:
-        for source, neighbors in enumerate(graph.edges):
+        for source, neighbors in graph.edges.items():
             for weight, neighbor in neighbors:
                 g.add_edge(source, neighbor, weight=weight)
     return g
