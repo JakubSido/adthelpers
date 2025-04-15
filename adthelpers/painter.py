@@ -10,6 +10,10 @@ import networkx as nx
 print(matplotlib.matplotlib_fname())
 
 
+RED_INDEX = 0
+BLUE_INDEX = 1
+YELLOW_INDEX = 2
+GREY_INDEX = 3
 
 def to_nx_graph(graph) -> nx.Graph:  # noqa: ANN001
     """Converts graph to networkx graph"""
@@ -32,7 +36,7 @@ class Painter:
     def __init__(self, graph, visible: PriorityQueue | None = None,  # noqa: ANN001
                  closed: Iterable[int] | None = None,
                  color_edges: list[tuple[int, int]] | None = None,
-                 wait_for_key: bool = False):  # noqa: FBT001, FBT002
+                 wait_for_key: bool = False, colors=("red", "blue", "yellow" , "grey")):  # noqa: FBT001, FBT002, 
         self.paused = wait_for_key
         self.wait_for_key = wait_for_key
         self.distances = None
@@ -41,6 +45,7 @@ class Painter:
         self.closed = closed
         self.graph = to_nx_graph(graph)
         self.color_edges = color_edges
+        self.colors = colors
 
         plt.ion()
         fig, self.ax = plt.subplots()
@@ -52,23 +57,23 @@ class Painter:
         color_map = []
         for _, node, *_ in enumerate(self.graph):
 
-            color = "grey"
+            color = self.colors[GREY_INDEX] 
             if self.visible is not None and self.visible.queue is not None \
                 and node in [x[1] for _, x in self.visible.queue]:
-                    color = "yellow"
+                    color = self.colors[YELLOW_INDEX] 
 
             if self.closed is not None:
                 try:
                     if node in self.closed:
-                            color = "blue"
+                            color = self.colors[BLUE_INDEX] 
                 except AttributeError:
                     pass
 
                 if node in self.closed:
-                    color = "blue"
+                    color = self.colors[BLUE_INDEX]
 
             if self.active is not None and node == self.active:
-                color = "red"
+                color = self.colors[RED_INDEX] 
 
             color_map.append(color)
         return color_map
@@ -112,11 +117,11 @@ class Painter:
         for edge in self.graph.edges:
             e = (edge[0], edge[1])
             if self.color_edges is None:
-                e_colors.append("grey")
+                e_colors.append(self.colors[GREY_INDEX])
             elif e in content_color_edges or (e[1], e[0]) in content_color_edges:
-                e_colors.append("red")
+                e_colors.append(self.colors[RED_INDEX])
             else:
-                e_colors.append("grey")
+                e_colors.append(self.colors[GREY_INDEX])
 
         nx.draw_networkx_edges(
             self.graph,
