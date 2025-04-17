@@ -36,10 +36,11 @@ class Painter:
     def __init__(self, graph, visible: PriorityQueue | None = None,  # noqa: ANN001
                  closed: Iterable[int] | None = None,
                  color_edges: list[tuple[int, int]] | None = None,
+                 distances: dict[int, int] | None = None,
                  wait_for_key: bool = False, colors=("red", "blue", "yellow" , "grey")):  # noqa: FBT001, FBT002, 
         self.paused = wait_for_key
         self.wait_for_key = wait_for_key
-        self.distances = None
+        self.distances = distances
         self.active = None
         self.visible = visible
         self.closed = closed
