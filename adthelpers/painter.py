@@ -103,7 +103,7 @@ class Painter:
         node_labels = {}
         for n in self.graph.nodes:
             node_labels[n] = f"{n}"
-            if self.distances is not None:
+            if self.distances is not None and n in self.distances:
                 node_labels[n] += "\n"+str(self.distances[n])
 
 
