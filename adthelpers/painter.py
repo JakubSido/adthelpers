@@ -104,10 +104,10 @@ class Painter:
         for n in self.graph.nodes:
             node_labels[n] = f'{n}'
             if self.distances is not None:
-                node_labels[n] += "\ninf"
+                node_labels[n] = "\ninf"
                 if n in self.distances:
-                    node_labels[n] += "\n"+str(self.distances[n])
-                    
+                    node_labels[n] = "\n"+str(self.distances[n])
+
 
         # node_labels = {k: f"{k}{v}" for k, v in self.distances.items()}
         nx.draw_networkx_labels(self.graph, pos, ax=self.ax, labels=node_labels)
