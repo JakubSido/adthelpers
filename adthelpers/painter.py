@@ -82,8 +82,8 @@ class Painter:
     def draw_graph(self, active = None) -> None:  # noqa: ANN001
         plt.cla()
 
-        if isinstance(active, int):
-            pass
+        if isinstance(active, int) or active is None:
+            self.active = active
         elif active is not None:
             self.active = active.id
 
